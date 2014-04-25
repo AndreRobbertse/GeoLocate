@@ -29,6 +29,7 @@
     <tfoot>
         <tr>
             <td><div class="span4" id="status" /></td>
+            <td><div class="span8" id="connectionType" /></td>
         </tr>
     </tfoot>
 </table>
@@ -127,14 +128,14 @@
                 document.getElementById('startLat').innerHTML = startPos.coords.latitude;
                 document.getElementById('startLon').innerHTML = startPos.coords.longitude;
             });
-
             // Update every 3 seconds
-            var options = { frequency: 3000 };
-            //var options = { frequency: 3000, maximumAge: 3000, timeout: 5000, enableHighAccuracy: true };
+            var options = { frequency: 3000, maximumAge: 3000, timeout: 5000, enableHighAccuracy: true };
             watchID = navigator.geolocation.watchPosition(success, error, options);
         } else {
             error('not supported');
         }
+
+        //checkConnection();
     };
 
     function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -172,5 +173,26 @@
             marker.setAnimation(google.maps.Animation.BOUNCE);
         }
     }
+
+    // wormhole.js needed
+    function checkConnection() {
+        var networkState = navigator.network.connection.type;
+
+        var states = {};
+        states[Connection.UNKNOWN] = 'Unknown connection';
+        states[Connection.ETHERNET] = 'Ethernet connection';
+        states[Connection.WIFI] = 'WiFi connection';
+        states[Connection.CELL_2G] = 'Cell 2G connection';
+        states[Connection.CELL_3G] = 'Cell 3G connection';
+        states[Connection.CELL_4G] = 'Cell 4G connection';
+        states[Connection.NONE] = 'No network connection';
+
+        var networkStateIndicator = document.createElement("span");
+        networkStateIndicator.className = "badge";
+        networkStateIndicator.appendChild(document.createTextNode(states[networkState] + "km"));
+
+        $("connectionType").append(networkStateIndicator);
+    }
+
 </script>
 
