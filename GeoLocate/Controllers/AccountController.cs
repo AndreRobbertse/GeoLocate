@@ -9,6 +9,8 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin.Security;
 using GeoLocate.Models;
+using System.Web.Security;
+using System.Security.Principal;
 
 namespace GeoLocate.Controllers
 {
@@ -30,9 +32,25 @@ namespace GeoLocate.Controllers
         //
         // GET: /Account/Login
         [AllowAnonymous]
-        public ActionResult Login(string returnUrl)
+        public async Task<ActionResult> Login(string returnUrl)
         {
             ViewBag.ReturnUrl = "Home";
+
+            if (System.Diagnostics.Debugger.IsAttached)
+            {
+                LoginViewModel model = new LoginViewModel();
+                model.UserName = @"andre";
+                model.Password = "password";
+
+                // Authenticate the user. If user have access to the ASP system
+
+                var user = await UserManager.FindAsync(model.UserName, model.Password);
+                if (user != null)
+                {
+                    await SignInAsync(user, model.RememberMe);
+                    return RedirectToLocal(returnUrl);
+                }
+            }
             return View();
         }
 
