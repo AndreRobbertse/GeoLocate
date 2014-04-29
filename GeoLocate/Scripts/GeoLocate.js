@@ -17,7 +17,7 @@ function success(position) {
     lidist.appendChild(document.createTextNode(calDist + "km"));
     li.appendChild(lidist);
 
-    li.appendChild(document.createTextNode("Lat:" + position.coords.latitude + "°, Long" + position.coords.longitude + "° "));
+    li.appendChild(document.createTextNode("Lat:" + position.coords.latitude + "°, Long:" + position.coords.longitude + "° "));
     ul.appendChild(li);
 
     var mapcanvas = document.createElement('div');
@@ -88,10 +88,17 @@ function error(msg) {
     // console.log(arguments);
 }
 
-$(function () {
+function startLocationTracking() {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function (position) {
             startPos = position;
+            // Slide in
+            $("#startLocationDetail").show().animate({ left: 0 });
+
+            $("#btnStart").attr("disabled", "disabled");
+            $("#btnStop").removeAttr("disabled");
+            $("#btnStop").css("background-color", "#004b37");
+
             document.getElementById('startLat').innerHTML = startPos.coords.latitude;
             document.getElementById('startLon').innerHTML = startPos.coords.longitude;
         });
@@ -103,7 +110,19 @@ $(function () {
     }
 
     //checkConnection();
-});
+}
+
+function stopLocationTracking() {
+    $("#startLocationDetail").hide().animate({ marginLeft: max }); // move right
+
+    $("#btnStop").attr("disabled", "disabled");
+    $("#btnStart").removeAttr("disabled");
+    $("#btnStart").css("background-color", "#004b37");
+
+    if (watchID > 0) {
+        navigator.geolocation.clearWatch(watchID);
+    }
+}
 
 function calculateDistance(lat1, lon1, lat2, lon2) {
     var R = 6371; // km

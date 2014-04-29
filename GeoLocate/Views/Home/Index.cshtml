@@ -9,16 +9,26 @@
 
 <table width="100%">
     <caption>
-        <h4>
-            <span>
-                Starting Location:Lat:<span id="startLat">???</span>°, Long:<span id="startLon">???</span>°
-            </span>
-        </h4>
+        <div id="startLocationDetail" style="display: none">
+            <h4>
+                <span>
+                    Starting Location:Lat:<span id="startLat">???</span>°, Long:<span id="startLon">???</span>°
+                </span>
+            </h4>
+        </div>
     </caption>
     <thead>
         <tr>
-            <th></th>
-            <th></th>
+            <th>
+                <button id="btnStart" type="button" class="btn btn-small" onclick="startLocationTracking()">
+                    <span class="glyphicon glyphicon-time"></span> Start
+                </button>
+                <button id="btnStop" type="button" class="btn btn-small" onclick="stopLocationTracking()">
+                    <span class="glyphicon glyphicon-off"></span> Stop
+                </button>
+            </th>
+            <th>
+            </th>
         </tr>
     </thead>
     <tbody>
