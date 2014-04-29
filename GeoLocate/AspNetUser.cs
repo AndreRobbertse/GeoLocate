@@ -19,6 +19,7 @@ namespace GeoLocate
             this.AspNetUserClaims = new HashSet<AspNetUserClaim>();
             this.AspNetUserLogins = new HashSet<AspNetUserLogin>();
             this.AspNetRoles = new HashSet<AspNetRole>();
+            this.UserRoutes = new HashSet<UserRoute>();
         }
     
         public string Id { get; set; }
@@ -30,5 +31,6 @@ namespace GeoLocate
         public virtual ICollection<AspNetUserClaim> AspNetUserClaims { get; set; }
         public virtual ICollection<AspNetUserLogin> AspNetUserLogins { get; set; }
         public virtual ICollection<AspNetRole> AspNetRoles { get; set; }
+        public virtual ICollection<UserRoute> UserRoutes { get; set; }
     }
 }

@@ -237,3 +237,12 @@ function PostUserData(position) {
         async: false
     });
 }
+
+
+function saveRoute() {
+    $('#modalSaveRoute').modal('toggle')
+}
+
+function saveUserRoute() {
+
+}

@@ -37,6 +37,37 @@ namespace GeoLocate.Internal
                 Context.SaveChanges();
             }
         }
+
+        public void NewUserRoute(GeoLocate.UserRoute userRoute)
+        {
+            if (userRoute != null)
+            {
+                userRoute.UserID = CurrentUser.Id;
+                userRoute.Timestamp = DateTime.Now;
+
+                Context.UserRoutes.Add(userRoute);
+                Context.SaveChanges();
+            }
+        }
+
+        public void NewUserRoutePoint(GeoLocate.UserRoute userRoute, List<GeoLocate.UserCoord> coordList)
+        {
+            if (userRoute != null && coordList != null && coordList.Count > 0)
+            {
+                foreach (GeoLocate.UserCoord coord in coordList)
+                {
+                    UserRouteCoord routePoint = new UserRouteCoord()
+                    {
+                        CoordId = coord.ID,
+                        Timestamp = DateTime.Now,
+                        UserRouteId = userRoute.ID
+                    };
+                    Context.UserRouteCoords.Add(routePoint);
+                    Context.SaveChanges();
+                }
+            }
+        }
+
     }
 
 

@@ -30,5 +30,7 @@ namespace GeoLocate
         public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
         public virtual DbSet<UserCoord> UserCoords { get; set; }
+        public virtual DbSet<UserRouteCoord> UserRouteCoords { get; set; }
+        public virtual DbSet<UserRoute> UserRoutes { get; set; }
     }
 }

@@ -12,23 +12,20 @@ namespace GeoLocate
     using System;
     using System.Collections.Generic;
     
-    public partial class UserCoord
+    public partial class UserRoute
     {
-        public UserCoord()
+        public UserRoute()
         {
             this.UserRouteCoords = new HashSet<UserRouteCoord>();
         }
     
         public long ID { get; set; }
         public string UserID { get; set; }
-        public Nullable<double> Longitude { get; set; }
-        public Nullable<double> Latitude { get; set; }
-        public Nullable<double> Accuracy { get; set; }
-        public Nullable<double> Altitude { get; set; }
-        public Nullable<double> Heading { get; set; }
-        public Nullable<double> Speed { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
         public System.DateTime Timestamp { get; set; }
     
+        public virtual AspNetUser AspNetUser { get; set; }
         public virtual ICollection<UserRouteCoord> UserRouteCoords { get; set; }
     }
 }

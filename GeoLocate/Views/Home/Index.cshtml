@@ -1,4 +1,5 @@
-﻿@{
+﻿
+@{
     ViewBag.Title = "Home Page";
 }
 
@@ -26,6 +27,9 @@
                 <button id="btnStop" type="button" class="btn btn-small" onclick="stopLocationTracking()">
                     <span class="glyphicon glyphicon-off"></span> Stop
                 </button>
+                <button id="btnSaveRoute" class="btn btn-small" type="button" onclick="saveRoute()">
+                    <span class="glyphicon glyphicon-lock"></span> Save
+                </button>
             </th>
             <th>
             </th>
@@ -45,3 +49,4 @@
     </tfoot>
 </table>
 
+@Html.Partial("_PartialRoute")

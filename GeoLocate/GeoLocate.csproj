@@ -242,9 +242,16 @@
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\UserCoord.cs" />
+    <Compile Include="Models\UserRoute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="UserCoord.cs">
+      <DependentUpon>GeoLocateModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UserRoute.cs">
+      <DependentUpon>GeoLocateModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UserRouteCoord.cs">
       <DependentUpon>GeoLocateModel.tt</DependentUpon>
     </Compile>
   </ItemGroup>
@@ -323,6 +330,7 @@
     <None Include="Scripts\jquery-2.1.0.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\createjs-2013.12.12.min.js" />
     <Content Include="Scripts\GeoLocate.js" />
     <Content Include="Scripts\jquery-2.1.0.js" />
     <Content Include="Scripts\jquery-2.1.0.min.js" />
@@ -364,6 +372,7 @@
     <Content Include="Views\Account\Manage.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Home\_PartialRoute.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

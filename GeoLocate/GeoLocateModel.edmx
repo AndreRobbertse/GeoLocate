@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="GeoLocateModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="GeoLocateModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="AspNetRoles">
           <Key>
             <PropertyRef Name="Id" />
@@ -63,6 +63,28 @@
           <Property Name="Speed" Type="float" />
           <Property Name="Timestamp" Type="datetime" Nullable="false" />
         </EntityType>
+        <EntityType Name="UserRoute">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserID" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="250" Nullable="false" />
+          <Property Name="Description" Type="varchar(max)" />
+          <Property Name="Timestamp" Type="datetime" Nullable="false" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'GeoLocate.dbo.UserRouteCoord' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="UserRouteCoord">
+          <Key>
+            <PropertyRef Name="UserRouteId" />
+            <PropertyRef Name="CoordId" />
+            <PropertyRef Name="Timestamp" />
+          </Key>
+          <Property Name="UserRouteId" Type="bigint" Nullable="false" />
+          <Property Name="CoordId" Type="bigint" Nullable="false" />
+          <Property Name="Timestamp" Type="datetime" Nullable="false" />
+        </EntityType>
         <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_User_Id">
           <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -119,6 +141,42 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_UserRoute_AspNetUsers">
+          <End Role="AspNetUsers" Type="Self.AspNetUsers" Multiplicity="1" />
+          <End Role="UserRoute" Type="Self.UserRoute" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUsers">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserRoute">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserRouteCoord_UserCoord">
+          <End Role="UserCoord" Type="Self.UserCoord" Multiplicity="1" />
+          <End Role="UserRouteCoord" Type="Self.UserRouteCoord" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserCoord">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserRouteCoord">
+              <PropertyRef Name="CoordId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserRouteCoord_UserRoute">
+          <End Role="UserRoute" Type="Self.UserRoute" Multiplicity="1" />
+          <End Role="UserRouteCoord" Type="Self.UserRouteCoord" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserRoute">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserRouteCoord">
+              <PropertyRef Name="UserRouteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <EntityContainer Name="GeoLocateModelStoreContainer">
           <EntitySet Name="AspNetRoles" EntityType="Self.AspNetRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUserClaims" EntityType="Self.AspNetUserClaims" Schema="dbo" store:Type="Tables" />
@@ -126,6 +184,14 @@
           <EntitySet Name="AspNetUserRoles" EntityType="Self.AspNetUserRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserCoord" EntityType="Self.UserCoord" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserRoute" EntityType="Self.UserRoute" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserRouteCoord" EntityType="Self.UserRouteCoord" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [UserRouteCoord].[UserRouteId] AS [UserRouteId], 
+    [UserRouteCoord].[CoordId] AS [CoordId], 
+    [UserRouteCoord].[Timestamp] AS [Timestamp]
+    FROM [dbo].[UserRouteCoord] AS [UserRouteCoord]</DefiningQuery>
+          </EntitySet>
           <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_User_Id" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_User_Id">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
@@ -142,9 +208,20 @@
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserRoles" EntitySet="AspNetUserRoles" />
           </AssociationSet>
+          <AssociationSet Name="FK_UserRoute_AspNetUsers" Association="Self.FK_UserRoute_AspNetUsers">
+            <End Role="AspNetUsers" EntitySet="AspNetUsers" />
+            <End Role="UserRoute" EntitySet="UserRoute" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserRouteCoord_UserCoord" Association="Self.FK_UserRouteCoord_UserCoord">
+            <End Role="UserCoord" EntitySet="UserCoord" />
+            <End Role="UserRouteCoord" EntitySet="UserRouteCoord" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserRouteCoord_UserRoute" Association="Self.FK_UserRouteCoord_UserRoute">
+            <End Role="UserRoute" EntitySet="UserRoute" />
+            <End Role="UserRouteCoord" EntitySet="UserRouteCoord" />
+          </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="GeoLocateModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -189,6 +266,7 @@
           <NavigationProperty Name="AspNetUserClaims" Relationship="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_User_Id" FromRole="AspNetUsers" ToRole="AspNetUserClaims" />
           <NavigationProperty Name="AspNetUserLogins" Relationship="Self.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" FromRole="AspNetUsers" ToRole="AspNetUserLogins" />
           <NavigationProperty Name="AspNetRoles" Relationship="Self.AspNetUserRoles" FromRole="AspNetUsers" ToRole="AspNetRoles" />
+          <NavigationProperty Name="UserRoutes" Relationship="GeoLocateModel.FK_UserRoute_AspNetUsers" FromRole="AspNetUser" ToRole="UserRoute" />
         </EntityType>
         <EntityType Name="UserCoord">
           <Key>
@@ -203,6 +281,7 @@
           <Property Name="Heading" Type="Double" />
           <Property Name="Speed" Type="Double" />
           <Property Name="Timestamp" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="UserRouteCoords" Relationship="GeoLocateModel.FK_UserRouteCoord_UserCoord" FromRole="UserCoord" ToRole="UserRouteCoord" />
         </EntityType>
         <Association Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_User_Id">
           <End Role="AspNetUsers" Type="Self.AspNetUser" Multiplicity="1">
@@ -254,7 +333,81 @@
             <End Role="AspNetRoles" EntitySet="AspNetRoles" />
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
           </AssociationSet>
+          <EntitySet Name="UserRouteCoords" EntityType="GeoLocateModel.UserRouteCoord" />
+          <AssociationSet Name="FK_UserRouteCoord_UserCoord" Association="GeoLocateModel.FK_UserRouteCoord_UserCoord">
+            <End Role="UserCoord" EntitySet="UserCoords" />
+            <End Role="UserRouteCoord" EntitySet="UserRouteCoords" />
+          </AssociationSet>
+          <EntitySet Name="UserRoutes" EntityType="GeoLocateModel.UserRoute" />
+          <AssociationSet Name="FK_UserRoute_AspNetUsers" Association="GeoLocateModel.FK_UserRoute_AspNetUsers">
+            <End Role="AspNetUser" EntitySet="AspNetUsers" />
+            <End Role="UserRoute" EntitySet="UserRoutes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserRouteCoord_UserRoute" Association="GeoLocateModel.FK_UserRouteCoord_UserRoute">
+            <End Role="UserRoute" EntitySet="UserRoutes" />
+            <End Role="UserRouteCoord" EntitySet="UserRouteCoords" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="UserRouteCoord">
+          <Key>
+            <PropertyRef Name="UserRouteId" />
+            <PropertyRef Name="CoordId" />
+            <PropertyRef Name="Timestamp" />
+          </Key>
+          <Property Name="UserRouteId" Type="Int64" Nullable="false" />
+          <Property Name="CoordId" Type="Int64" Nullable="false" />
+          <Property Name="Timestamp" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="UserCoord" Relationship="GeoLocateModel.FK_UserRouteCoord_UserCoord" FromRole="UserRouteCoord" ToRole="UserCoord" />
+          <NavigationProperty Name="UserRoute" Relationship="GeoLocateModel.FK_UserRouteCoord_UserRoute" FromRole="UserRouteCoord" ToRole="UserRoute" />
+        </EntityType>
+        <Association Name="FK_UserRouteCoord_UserCoord">
+          <End Type="GeoLocateModel.UserCoord" Role="UserCoord" Multiplicity="1" />
+          <End Type="GeoLocateModel.UserRouteCoord" Role="UserRouteCoord" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserCoord">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserRouteCoord">
+              <PropertyRef Name="CoordId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="UserRoute">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserID" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Timestamp" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="AspNetUser" Relationship="GeoLocateModel.FK_UserRoute_AspNetUsers" FromRole="UserRoute" ToRole="AspNetUser" />
+          <NavigationProperty Name="UserRouteCoords" Relationship="GeoLocateModel.FK_UserRouteCoord_UserRoute" FromRole="UserRoute" ToRole="UserRouteCoord" />
+        </EntityType>
+        <Association Name="FK_UserRoute_AspNetUsers">
+          <End Type="GeoLocateModel.AspNetUser" Role="AspNetUser" Multiplicity="1" />
+          <End Type="GeoLocateModel.UserRoute" Role="UserRoute" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AspNetUser">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserRoute">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserRouteCoord_UserRoute">
+          <End Type="GeoLocateModel.UserRoute" Role="UserRoute" Multiplicity="1" />
+          <End Type="GeoLocateModel.UserRouteCoord" Role="UserRouteCoord" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserRoute">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserRouteCoord">
+              <PropertyRef Name="UserRouteId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -322,6 +475,26 @@
               <ScalarProperty Name="Id" ColumnName="UserId" />
             </EndProperty>
           </AssociationSetMapping>
+          <EntitySetMapping Name="UserRouteCoords">
+            <EntityTypeMapping TypeName="GeoLocateModel.UserRouteCoord">
+              <MappingFragment StoreEntitySet="UserRouteCoord">
+                <ScalarProperty Name="Timestamp" ColumnName="Timestamp" />
+                <ScalarProperty Name="CoordId" ColumnName="CoordId" />
+                <ScalarProperty Name="UserRouteId" ColumnName="UserRouteId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserRoutes">
+            <EntityTypeMapping TypeName="GeoLocateModel.UserRoute">
+              <MappingFragment StoreEntitySet="UserRoute">
+                <ScalarProperty Name="Timestamp" ColumnName="Timestamp" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="UserID" ColumnName="UserID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

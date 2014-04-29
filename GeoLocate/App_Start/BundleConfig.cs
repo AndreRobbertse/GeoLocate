@@ -42,6 +42,12 @@ namespace GeoLocate
             bootstrapBundle.Orderer = nullOrderer;
             bundles.Add(bootstrapBundle);
 
+            var createjsBundle = new CustomScriptBundle("~/bundles/createjs");
+            createjsBundle.Include("~/Scripts/createjs-2013.12.12.min.js");
+            createjsBundle.Transforms.Add(jsTransformer);
+            createjsBundle.Orderer = nullOrderer;
+            bundles.Add(createjsBundle);
+
             #endregion Script Bundle
 
             #region Style Bundle
