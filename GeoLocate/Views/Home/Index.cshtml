@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Home Page";
 }
 
@@ -10,10 +9,10 @@
 
 <table width="100%">
     <caption>
-        <div id="startLocationDetail" style="display: none">
+        <div id="statusMessage">
             <h4>
                 <span>
-                    Starting Location:Lat:<span id="startLat">???</span>°, Long:<span id="startLon">???</span>°
+                    @ViewBag.Message
                 </span>
             </h4>
         </div>
@@ -48,5 +47,6 @@
         </tr>
     </tfoot>
 </table>
+
 
 @Html.Partial("_PartialRoute")

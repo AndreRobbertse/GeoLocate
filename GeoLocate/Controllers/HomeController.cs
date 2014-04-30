@@ -13,10 +13,18 @@ namespace GeoLocate.Controllers
     public class HomeController : BaseController
     {
         private static string UserRouteItems = "UserRouteItems";
+        private static string RouteMessage = "RouteMessage";
 
         public ActionResult Index()
         {
             GeoLocate.Models.UserRoute model = new Models.UserRoute();
+
+            ViewBag.Message = TempData[RouteMessage];
+
+            if (!string.IsNullOrEmpty(ViewBag.Message))
+            {
+                TempData[RouteMessage] = string.Empty;
+            }
             return View(model);
         }
 
@@ -66,7 +74,11 @@ namespace GeoLocate.Controllers
                                 context.NewUserCoord(usrCoord);
 
                                 // Update Session List
-                                var currentList = CurrentRouteList;
+                                List<UserCoord> currentList = CurrentRouteList;
+                                if (currentList == null)
+                                {
+                                    currentList = new List<UserCoord>();
+                                }
                                 currentList.Add(usrCoord);
                                 CurrentRouteList = currentList;
                             }
@@ -99,6 +111,8 @@ namespace GeoLocate.Controllers
 
                         // Save Route Points
                         context.NewUserRoutePoint(userRoute, currentList);
+
+                        TempData[RouteMessage] = string.Format("Route {0} Saved Successfully !", userRoute.Name);
                     }
                 }
                 catch (Exception ex)
@@ -106,6 +120,7 @@ namespace GeoLocate.Controllers
                     Debug.WriteLine(ex.ToString());
 
                     ModelState.AddModelError("", ex.ToString());
+                    TempData[RouteMessage] = ex.ToString();
                 }
             }
             return RedirectToAction("Index", "Home");
@@ -113,29 +128,26 @@ namespace GeoLocate.Controllers
 
         #region Private Methods
 
+        private List<UserCoord> _currentRouteList;
         private List<UserCoord> CurrentRouteList
         {
             get
             {
-                List<UserCoord> listFromSession = new List<UserCoord>();
-                if (Session[UserRouteItems] != null)
+                var cache = System.Web.HttpContext.Current.Cache;
+
+                if (cache[UserRouteItems] != null)
                 {
-                    try
-                    {
-                        listFromSession = (List<UserCoord>)Session[UserRouteItems];
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine(ex.ToString());
-                    }
+                    _currentRouteList = cache[UserRouteItems] as List<UserCoord>;
                 }
-                return listFromSession;
+                return _currentRouteList;
             }
             set
             {
                 if (value != null && value.Count > 0)
                 {
-                    Session[UserRouteItems] = value;
+                    var cache = System.Web.HttpContext.Current.Cache;
+
+                    cache[UserRouteItems] = value;
                 }
             }
         }

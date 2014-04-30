@@ -93,14 +93,10 @@ function startLocationTracking() {
         navigator.geolocation.getCurrentPosition(function (position) {
             startPos = position;
             // Slide in
-            $("#startLocationDetail").show().animate({ left: 0 });
 
             $("#btnStart").attr("disabled", "disabled");
             $("#btnStop").removeAttr("disabled");
             $("#btnStop").css("background-color", "#004b37");
-
-            document.getElementById('startLat').innerHTML = startPos.coords.latitude;
-            document.getElementById('startLon').innerHTML = startPos.coords.longitude;
         });
         // Update every 3 seconds
         var options = { frequency: 3000, maximumAge: 3000, timeout: 5000, enableHighAccuracy: true };
@@ -113,7 +109,6 @@ function startLocationTracking() {
 }
 
 function stopLocationTracking() {
-    $("#startLocationDetail").hide().animate({ marginLeft: max }); // move right
 
     $("#btnStop").attr("disabled", "disabled");
     $("#btnStart").removeAttr("disabled");
@@ -234,7 +229,9 @@ function PostUserData(position) {
         },
 
         processData: false,
-        async: false
+        async: false,
+        cache: false,
+        traditional: true
     });
 }
 

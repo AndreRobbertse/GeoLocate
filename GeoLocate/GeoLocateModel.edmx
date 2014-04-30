@@ -73,13 +73,10 @@
           <Property Name="Description" Type="varchar(max)" />
           <Property Name="Timestamp" Type="datetime" Nullable="false" />
         </EntityType>
-        <!--Errors Found During Generation:
-warning 6002: The table/view 'GeoLocate.dbo.UserRouteCoord' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="UserRouteCoord">
           <Key>
             <PropertyRef Name="UserRouteId" />
             <PropertyRef Name="CoordId" />
-            <PropertyRef Name="Timestamp" />
           </Key>
           <Property Name="UserRouteId" Type="bigint" Nullable="false" />
           <Property Name="CoordId" Type="bigint" Nullable="false" />
@@ -185,13 +182,7 @@ warning 6002: The table/view 'GeoLocate.dbo.UserRouteCoord' does not have a prim
           <EntitySet Name="AspNetUsers" EntityType="Self.AspNetUsers" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserCoord" EntityType="Self.UserCoord" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserRoute" EntityType="Self.UserRoute" Schema="dbo" store:Type="Tables" />
-          <EntitySet Name="UserRouteCoord" EntityType="Self.UserRouteCoord" store:Type="Tables" store:Schema="dbo">
-            <DefiningQuery>SELECT 
-    [UserRouteCoord].[UserRouteId] AS [UserRouteId], 
-    [UserRouteCoord].[CoordId] AS [CoordId], 
-    [UserRouteCoord].[Timestamp] AS [Timestamp]
-    FROM [dbo].[UserRouteCoord] AS [UserRouteCoord]</DefiningQuery>
-          </EntitySet>
+          <EntitySet Name="UserRouteCoord" EntityType="Self.UserRouteCoord" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_dbo_AspNetUserClaims_dbo_AspNetUsers_User_Id" Association="Self.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_User_Id">
             <End Role="AspNetUsers" EntitySet="AspNetUsers" />
             <End Role="AspNetUserClaims" EntitySet="AspNetUserClaims" />
@@ -352,7 +343,6 @@ warning 6002: The table/view 'GeoLocate.dbo.UserRouteCoord' does not have a prim
           <Key>
             <PropertyRef Name="UserRouteId" />
             <PropertyRef Name="CoordId" />
-            <PropertyRef Name="Timestamp" />
           </Key>
           <Property Name="UserRouteId" Type="Int64" Nullable="false" />
           <Property Name="CoordId" Type="Int64" Nullable="false" />
