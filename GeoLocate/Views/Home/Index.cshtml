@@ -23,11 +23,8 @@
                 <button id="btnStart" type="button" class="btn btn-small" onclick="startLocationTracking()">
                     <span class="glyphicon glyphicon-time"></span> Start
                 </button>
-                <button id="btnStop" type="button" class="btn btn-small" onclick="stopLocationTracking()">
+                <button id="btnStop" type="button" class="btn btn-small" disabled="disabled" onclick="stopLocationTracking()">
                     <span class="glyphicon glyphicon-off"></span> Stop
-                </button>
-                <button id="btnSaveRoute" class="btn btn-small" type="button" onclick="saveRoute()">
-                    <span class="glyphicon glyphicon-lock"></span> Save
                 </button>
             </th>
             <th>
@@ -37,7 +34,12 @@
     <tbody>
         <tr>
             <th><div id="map" /></th>
-            <td valign="top" align="left"><ol id="locationList"></ol></td>
+            <td valign="top" align="left">
+                <button id="btnSaveRoute" class="btn btn-small" type="button" disabled="disabled" onclick="saveRoute()">
+                    <span class="glyphicon glyphicon-lock"></span> Save
+                </button>
+                <ol id="locationList"></ol>
+            </td>
         </tr>
     </tbody>
     <tfoot>

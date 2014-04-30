@@ -97,6 +97,7 @@ function startLocationTracking() {
             $("#btnStart").attr("disabled", "disabled");
             $("#btnStop").removeAttr("disabled");
             $("#btnStop").css("background-color", "#004b37");
+            $("#btnSaveRoute").removeAttr("disabled");
         });
         // Update every 3 seconds
         var options = { frequency: 3000, maximumAge: 3000, timeout: 5000, enableHighAccuracy: true };
