@@ -3,6 +3,9 @@ var watchID;
 var startPos;
 var marker;
 var infoWindow;
+var lastLat, lastLong;
+// keep a tally of how many points we've added to the map
+var pointsAdded = 0;
 
 function success(position) {
 
@@ -20,56 +23,12 @@ function success(position) {
     li.appendChild(document.createTextNode("Lat:" + position.coords.latitude + "°, Long:" + position.coords.longitude + "° "));
     ul.appendChild(li);
 
-    var mapcanvas = document.createElement('div');
-    mapcanvas.id = 'mapcanvas';
-    mapcanvas.style.height = '600px';
-    mapcanvas.style.width = '700px';
 
-    document.getElementById("map").appendChild(mapcanvas);
+    var contentString = MakeInfoWindowText(position.timestamp, position.coords.latitude, position.coords.longitude, position.coords.accuracy, position.coords.altitude, position.coords.heading, position.coords.speed);
 
-    var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+    // Display Point an Info Window on Map
+    AddMapPoint(position.coords.latitude, position.coords.longitude, contentString, true);
 
-    var myOptions = {
-        zoom: 13,
-        center: latlng,
-        mapTypeControl: false,
-        navigationControlOptions: { style: google.maps.NavigationControlStyle.SMALL },
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
-        timeout: 60000
-    };
-    var map = new google.maps.Map(document.getElementById("mapcanvas"), myOptions);
-
-    var weatherLayer = new google.maps.weather.WeatherLayer({
-        temperatureUnits: google.maps.weather.TemperatureUnit.CELSIUS,
-        windSpeedUnit: google.maps.weather.WindSpeedUnit.KILOMETERS_PER_HOUR
-    });
-    weatherLayer.setMap(map);
-
-    // Remove the current marker, if there is one
-    if (typeof (marker) != "undefined") marker.setMap(null);
-    marker = new google.maps.Marker({
-        position: latlng,
-        map: map,
-        animation: google.maps.Animation.DROP,
-        title: "User location"
-    });
-    var contentString = "<b>Timestamp:</b> " + parseTimestamp(position.timestamp)
-        + "<br/><b>User location:</b> lat " + position.coords.latitude
-        + ", long " + position.coords.longitude
-        + "<br><b>Accuracy</b>:" + position.coords.accuracy
-        + "<br><b>Altitude</b>:" + position.coords.altitude
-        + "<br><b>Heading</b>:" + position.coords.heading
-        + "<br><b>Speed</b>:" + position.coords.speed;
-
-    // Remove the current infoWindow, if there is one
-    if (typeof (infoWindow) != "undefined") infoWindow.setMap(null);
-    infowindow = new google.maps.InfoWindow({
-        content: contentString
-    });
-
-    google.maps.event.addListener(marker, 'click', function () {
-        infowindow.open(map, marker);
-    });
     //var marker = new google.maps.Marker({
     //    position: latlng,
     //    map: map,
@@ -236,11 +195,119 @@ function PostUserData(position) {
     });
 }
 
-
 function saveRoute() {
     $('#modalSaveRoute').modal('toggle')
 }
 
-function saveUserRoute() {
+// var arrJsonObject = JSON.parse(mapItems);
+//var mapItems='[
+//{
+//    "Latitude": "22.575897",
+//    "Lonngitude": "88.431754",
+//    "CustomerCode": "*$$$*",
+//    "CustomerName": "*@@@*",
+//    "markedDate": "2/20/2014 12:04:41 PM"
+//},
+//{
+//    "Latitude": "22.615067",
+//    "Lonngitude": "88.431759",
+//    "CustomerCode": "*$$$*",
+//    "CustomerName": "*@@@*",
+//    "markedDate": "2/20/2014 3:02:19 PM"
+//}
+//]';
 
+function GetRoutePoints(routeId) {
+    var dataToBeSend = {
+        id: routeId
+    };
+
+    $.ajax({
+        type: "POST",
+        url: "GetRoutePoints",
+        data: JSON.stringify(dataToBeSend),
+        dataType: "json",
+        contentType: "application/json",
+        success: function (returnPayload) {
+            //var arrJsonObject = JSON.parse(returnPayload);
+            alert(returnPayload);
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+            console && console.log("request failed");
+            alert(thrownError);
+        }
+    });
+}
+
+function ShowMapPoints(arrJsonObject) {
+
+    for (var y = 1; y <= arrJsonObject.length; y++) {
+
+        var infoWindowTest = MakeInfoWindowText(arrJsonObject[y - 1].Timestamp, arrJsonObject[y - 1].Latitude, arrJsonObject[y - 1].Lonngitude,
+            arrJsonObject[y - 1].Accuracy, arrJsonObject[y - 1].Altitude, arrJsonObject[y - 1].Heading, arrJsonObject[y - 1].Speed);
+
+        AddMapPoint(arrJsonObject[y - 1].Latitude, arrJsonObject[y - 1].Lonngitude, infoWindowTest, true);
+    }
+}
+
+function AddMapPoint(latitude, longitude, infoWindowText, showWeather) {
+
+    if ((typeof (lastLat) == "undefined" || lastLat != latitude)
+        && (typeof (lastLong) == "undefined" || lastLong != longitude)) {
+
+        var mapcanvas = document.createElement('div');
+        mapcanvas.id = 'mapcanvas';
+        mapcanvas.style.height = '600px';
+        mapcanvas.style.width = '700px';
+
+        document.getElementById("map").appendChild(mapcanvas);
+
+        var latlng = new google.maps.LatLng(latitude, longitude);
+
+        var myOptions = {
+            zoom: 13,
+            center: latlng,
+            mapTypeControl: false,
+            navigationControlOptions: { style: google.maps.NavigationControlStyle.SMALL },
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            timeout: 60000
+        };
+        var map = new google.maps.Map(document.getElementById("mapcanvas"), myOptions);
+
+        if (showWeather) {
+            var weatherLayer = new google.maps.weather.WeatherLayer({
+                temperatureUnits: google.maps.weather.TemperatureUnit.CELSIUS,
+                windSpeedUnit: google.maps.weather.WindSpeedUnit.KILOMETERS_PER_HOUR
+            });
+            weatherLayer.setMap(map);
+        }
+        // Remove the current marker, if there is one
+        //if (typeof (marker) != "undefined") marker.setMap(null);
+        marker = new google.maps.Marker({
+            position: latlng,
+            map: map,
+            animation: google.maps.Animation.DROP,
+            title: "User location"
+        });
+
+        // Remove the current infoWindow, if there is one
+        //if (typeof (infoWindow) != "undefined") infoWindow.setMap(null);
+        infowindow = new google.maps.InfoWindow({
+            content: infoWindowText
+        });
+
+        google.maps.event.addListener(marker, 'click', function () {
+            infowindow.open(map, marker);
+        });
+
+    } // New Position
+}
+
+function MakeInfoWindowText(timestamp, latitude, longitude, accuracy, altitude, heading, speed) {
+    return "<b>Timestamp:</b> " + parseTimestamp(timestamp)
+        + "<br/><b>User location:</b> lat " + latitude + ", long " + longitude
+        + "<br><b>Accuracy</b>:" + accuracy + " meters"
+        + "<br><b>Altitude</b>:" + altitude + " meters"
+        + "<br><b>Heading</b>:" + heading + " °"
+        + "<br><b>Speed</b>:" + speed + " m/sec";
 }

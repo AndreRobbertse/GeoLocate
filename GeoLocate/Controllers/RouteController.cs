@@ -129,5 +129,11 @@ namespace GeoLocate.Controllers
             }
             base.Dispose(disposing);
         }
+
+        [HttpPost]
+        public JsonResult GetRoutePoints(string userRouteId)
+        {
+            return Json("");
+        }
     }
 }

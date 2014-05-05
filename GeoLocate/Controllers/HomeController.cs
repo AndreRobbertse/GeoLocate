@@ -113,6 +113,8 @@ namespace GeoLocate.Controllers
                         context.NewUserRoutePoint(userRoute, currentList);
 
                         TempData[RouteMessage] = string.Format("Route {0} Saved Successfully !", userRoute.Name);
+
+                        CurrentRouteList = null;
                     }
                 }
                 catch (Exception ex)
@@ -143,12 +145,9 @@ namespace GeoLocate.Controllers
             }
             set
             {
-                if (value != null && value.Count > 0)
-                {
-                    var cache = System.Web.HttpContext.Current.Cache;
+                var cache = System.Web.HttpContext.Current.Cache;
 
-                    cache[UserRouteItems] = value;
-                }
+                cache[UserRouteItems] = value;
             }
         }
 

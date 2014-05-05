@@ -27,18 +27,26 @@
                     <span class="glyphicon glyphicon-off"></span> Stop
                 </button>
             </th>
-            <th>
-            </th>
         </tr>
     </thead>
     <tbody>
         <tr>
             <th><div id="map" /></th>
             <td valign="top" align="left">
-                <button id="btnSaveRoute" class="btn btn-small" type="button" disabled="disabled" onclick="saveRoute()">
-                    <span class="glyphicon glyphicon-lock"></span> Save
-                </button>
-                <ol id="locationList"></ol>
+                <table>
+                    <tr>
+                        <td align="right">
+                            <button id="btnSaveRoute" class="btn btn-small" type="button" disabled="disabled" onclick="saveRoute()">
+                                <span class="glyphicon glyphicon-lock"></span> Save Route
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <ol id="locationList"></ol>
+                        </td>
+                    </tr>
+                </table>
             </td>
         </tr>
     </tbody>
