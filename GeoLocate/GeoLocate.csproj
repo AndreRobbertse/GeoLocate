@@ -219,6 +219,7 @@
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\RouteController.cs" />
+    <Compile Include="Models\UserRoutePlot.cs" />
     <Compile Include="GeoLocateModel.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -379,6 +380,7 @@
     <Content Include="Views\Route\Details.cshtml" />
     <Content Include="Views\Route\Edit.cshtml" />
     <Content Include="Views\Route\Index.cshtml" />
+    <Content Include="Views\Route\RoutePoints.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

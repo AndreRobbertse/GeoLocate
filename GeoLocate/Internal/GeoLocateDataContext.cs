@@ -68,6 +68,19 @@ namespace GeoLocate.Internal
             }
         }
 
+        public List<UserCoord> GetUserRoutePoints(long routeId)
+        {
+            if (routeId > 0)
+            {
+                var qUserCoords = (from t in Context.UserCoords
+                               join i in Context.UserRouteCoords on t.ID equals i.CoordId
+                               select t).ToList();
+
+                return qUserCoords;
+
+            }
+            return null;
+        }
     }
 
 

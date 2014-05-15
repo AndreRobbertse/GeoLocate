@@ -4,16 +4,11 @@
     ViewBag.Title = "Details";
 }
 
-<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true&libraries=weather"></script>
-
-<script src="~/Scripts/GeoLocate.js"></script>
-
 <h2>Details</h2>
 
 <div>
     <h4>UserRoute</h4>
     <hr />
-    @Html.HiddenFor(model => model.ID, new { @Id = "routeId" })
     <dl class="dl-horizontal">
         <dt>
             @Html.DisplayNameFor(model => model.Name)
@@ -48,13 +43,7 @@
         </dd>
 
     </dl>
-
-    <button id="btnShow" type="button" class="btn btn-small" onclick="GetRoutePoints(@Model.ID)">
-        <span class="glyphicon glyphicon-time"></span> Show on Map
-    </button>
 </div>
-
-<div id="map" />
 
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |

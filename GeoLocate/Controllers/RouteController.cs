@@ -8,6 +8,8 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using GeoLocate;
+using GeoLocate.Models;
+using System.Diagnostics;
 
 namespace GeoLocate.Controllers
 {
@@ -49,7 +51,7 @@ namespace GeoLocate.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include="ID,UserID,Name,Description,Timestamp")] UserRoute userroute)
+        public async Task<ActionResult> Create([Bind(Include = "ID,UserID,Name,Description,Timestamp")] UserRoute userroute)
         {
             if (ModelState.IsValid)
             {
@@ -83,7 +85,7 @@ namespace GeoLocate.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include="ID,UserID,Name,Description,Timestamp")] UserRoute userroute)
+        public async Task<ActionResult> Edit([Bind(Include = "ID,UserID,Name,Description,Timestamp")] UserRoute userroute)
         {
             if (ModelState.IsValid)
             {
@@ -130,10 +132,38 @@ namespace GeoLocate.Controllers
             base.Dispose(disposing);
         }
 
-        [HttpPost]
-        public JsonResult GetRoutePoints(string userRouteId)
+
+        public ActionResult RoutePoints(long? id)
         {
-            return Json("");
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            UserCoord model = new UserCoord();
+            try
+            {
+                var qUserCoords = (from t in db.UserCoords
+                                   join i in db.UserRouteCoords on t.ID equals i.CoordId
+                                   where i.UserRouteId == id
+                                   select t).ToList();
+
+                if (qUserCoords == null)
+                {
+                    return HttpNotFound();
+                }
+
+                return View(qUserCoords);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+
+                ModelState.AddModelError("", ex.ToString());
+            }
+            return View(model);
         }
+
+
     }
 }

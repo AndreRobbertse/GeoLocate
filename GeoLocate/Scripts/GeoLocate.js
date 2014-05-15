@@ -9,19 +9,8 @@ var pointsAdded = 0;
 
 function success(position) {
 
-    var ul = document.getElementById("locationList");
-    var li = document.createElement("li");
-    li.className = "list-group-item";
-    var calDist = calculateDistance(startPos.coords.latitude, startPos.coords.longitude,
-                    position.coords.latitude, position.coords.longitude);
-
-    var lidist = document.createElement("span");
-    lidist.className = "badge";
-    lidist.appendChild(document.createTextNode(calDist + "km"));
-    li.appendChild(lidist);
-
-    li.appendChild(document.createTextNode("Lat:" + position.coords.latitude + "°, Long:" + position.coords.longitude + "° "));
-    ul.appendChild(li);
+    ShowMapPointListItem(startPos.coords.latitude, startPos.coords.longitude,
+                    position.coords.latitude, position.coords.longitude)
 
 
     var contentString = MakeInfoWindowText(position.timestamp, position.coords.latitude, position.coords.longitude, position.coords.accuracy, position.coords.altitude, position.coords.heading, position.coords.speed);
@@ -80,15 +69,20 @@ function stopLocationTracking() {
 }
 
 function calculateDistance(lat1, lon1, lat2, lon2) {
-    var R = 6371; // km
-    var dLat = (lat2 - lat1).toRad();
-    var dLon = (lon2 - lon1).toRad();
-    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(lat1.toRad()) * Math.cos(lat2.toRad()) *
-            Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    var d = R * c;
-    return d;
+    try {
+        var R = 6371; // km
+        var dLat = (lat2 - lat1).toRad();
+        var dLon = (lon2 - lon1).toRad();
+        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1.toRad()) * Math.cos(lat2.toRad()) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        var d = R * c;
+        return d;
+    } catch (err) {
+
+    }
+    return 0;
 }
 
 Number.prototype.toRad = function () {
@@ -218,22 +212,15 @@ function saveRoute() {
 //]';
 
 function GetRoutePoints(routeId) {
-    var dataToBeSend = {
-        id: routeId
-    };
 
     $.ajax({
         type: "POST",
-        url: "GetRoutePoints",
-        data: JSON.stringify(dataToBeSend),
-        dataType: "json",
-        contentType: "application/json",
-        success: function (returnPayload) {
-            //var arrJsonObject = JSON.parse(returnPayload);
-            alert(returnPayload);
+        url: "RoutePoints",
+        data: routeId,
+        success: function (data) {
+            alert(data);
         },
         error: function (xhr, ajaxOptions, thrownError) {
-            console && console.log("request failed");
             alert(thrownError);
         }
     });
@@ -310,4 +297,21 @@ function MakeInfoWindowText(timestamp, latitude, longitude, accuracy, altitude, 
         + "<br><b>Altitude</b>:" + altitude + " meters"
         + "<br><b>Heading</b>:" + heading + " °"
         + "<br><b>Speed</b>:" + speed + " m/sec";
+}
+
+function ShowMapPointListItem(startlatitude, startlongitude, latitude, longitude) {
+
+    var ul = document.getElementById("locationList");
+    var li = document.createElement("li");
+    li.className = "list-group-item";
+    var calDist = calculateDistance(startlatitude, startlongitude,
+                    latitude, longitude);
+
+    var lidist = document.createElement("span");
+    lidist.className = "badge";
+    lidist.appendChild(document.createTextNode(calDist + "km"));
+    li.appendChild(lidist);
+
+    li.appendChild(document.createTextNode("Lat:" + latitude + "°, Long:" + longitude + "° "));
+    ul.appendChild(li);
 }
