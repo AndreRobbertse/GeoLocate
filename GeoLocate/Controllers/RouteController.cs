@@ -10,6 +10,7 @@ using System.Web.Mvc;
 using GeoLocate;
 using GeoLocate.Models;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace GeoLocate.Controllers
 {
@@ -139,6 +140,12 @@ namespace GeoLocate.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
+            // Check / Change defaults
+            // Force NumberDecimalSeparator to point for Coord parsing
+            System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
+            customCulture.NumberFormat.NumberDecimalSeparator = ".";
+            System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
 
             UserCoord model = new UserCoord();
             try
