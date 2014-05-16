@@ -11,6 +11,7 @@ using GeoLocate;
 using GeoLocate.Models;
 using System.Diagnostics;
 using System.Globalization;
+using GeoLocate.Internal;
 
 namespace GeoLocate.Controllers
 {
@@ -141,26 +142,30 @@ namespace GeoLocate.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            // Check / Change defaults
-            // Force NumberDecimalSeparator to point for Coord parsing
-            System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
-            customCulture.NumberFormat.NumberDecimalSeparator = ".";
-            System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
+            AppExtension.NumberDecimalSeparatorChange(".");
 
             UserCoord model = new UserCoord();
             try
             {
-                var qUserCoords = (from t in db.UserCoords
-                                   join i in db.UserRouteCoords on t.ID equals i.CoordId
-                                   where i.UserRouteId == id
-                                   select t).ToList();
-
-                if (qUserCoords == null)
+                using (var context = new GeoLocateDataContext())
                 {
-                    return HttpNotFound();
-                }
+                    var qUserCoords = context.GetUserRoutePoints(id.Value);
 
-                return View(qUserCoords);
+                    if (qUserCoords == null)
+                    {
+                        return HttpNotFound();
+                    }
+
+                    var routeInfo = context.GetUserRoute(id.Value);
+                    if (routeInfo != null)
+                    {
+                        ViewBag.RouteName = routeInfo.Name;
+                        ViewBag.RouteDesc = routeInfo.Description;
+                        ViewBag.RouteDate = routeInfo.Timestamp;
+                    }
+
+                    return View(qUserCoords);
+                } // GeoLocateDataContext
             }
             catch (Exception ex)
             {

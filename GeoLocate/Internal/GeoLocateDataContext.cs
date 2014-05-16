@@ -73,10 +73,25 @@ namespace GeoLocate.Internal
             if (routeId > 0)
             {
                 var qUserCoords = (from t in Context.UserCoords
-                               join i in Context.UserRouteCoords on t.ID equals i.CoordId
-                               select t).ToList();
+                                   join i in Context.UserRouteCoords on t.ID equals i.CoordId
+                                   where i.UserRouteId == routeId
+                                   select t).ToList();
 
                 return qUserCoords;
+
+            }
+            return null;
+        }
+
+        public UserRoute GetUserRoute(long routeId)
+        {
+            if (routeId > 0)
+            {
+                var qRoute = (from t in Context.UserRoutes
+                                   where t.ID == routeId
+                                   select t).FirstOrDefault();
+
+                return qRoute;
 
             }
             return null;
